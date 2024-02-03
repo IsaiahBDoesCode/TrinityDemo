@@ -1,0 +1,36 @@
+
+<div class="center">
+    <button mat-raised-button color="primary" (click)="buttonClicked()">Click Me to Generate A Random Movie!</button>
+</div>
+
+<div *ngIf="tableData.length > 1">
+    <table mat-table [dataSource]="tableData" class="mat-elevation-z8">
+
+        <!--- Note that these columns can be defined in any order.
+              The actual rendered columns are set as a property on the row definition" -->
+      
+        <!-- Position Column -->
+        <ng-container matColumnDef="rating">
+          <th mat-header-cell *matHeaderCellDef> Rating </th>
+          <td mat-cell *matCellDef="let element"> {{element.rating}} </td>
+        </ng-container>
+      
+        <!-- Name Column -->
+        <ng-container matColumnDef="image">
+          <th mat-header-cell *matHeaderCellDef> Image </th>
+          <td mat-cell *matCellDef="let element"> {{element.image }} </td>
+        </ng-container>
+      
+        <!-- Weight Column -->
+        <ng-container matColumnDef="caption">
+          <th mat-header-cell *matHeaderCellDef> Caption </th>
+          <td mat-cell *matCellDef="let element"> {{element.caption}} </td>
+        </ng-container>
+      
+
+      
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+</div>
+
