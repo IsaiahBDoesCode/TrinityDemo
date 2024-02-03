@@ -5,6 +5,8 @@ import {MatTabsModule} from '@angular/material/tabs';
 import { HttpClientModule } from '@angular/common/http';
 import {MatTableModule} from '@angular/material/table';
 import { ApiService } from './services/apiService';
+import {MatSnackBarModule} from '@angular/material/snack-bar';
+
 
 
 
@@ -25,7 +27,8 @@ import { GenerateRandomMovieOrShowComponent } from './generate-random-movie-or-s
     MatButtonModule,
     MatTabsModule,
     HttpClientModule,
-    MatTableModule
+    MatTableModule,
+    MatSnackBarModule
   ],
   providers: [ApiService],
   bootstrap: [AppComponent]
