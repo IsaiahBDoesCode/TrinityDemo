@@ -97,8 +97,7 @@ export class GenerateRandomMovieOrShowComponent {
         this.getMovieTitle(this.selectedMovie),
         this.getMovieCaption(this.selectedMovie),
         this.getMovieImage(this.selectedMovie),
-        this.getMovieReleaseYear(this.selectedMovie),
-        this.dontAddDuplicates(this.selectedMovie)
+        this.getMovieReleaseYear(this.selectedMovie)
       ]
       Promise.all(buildMovieResults).then(() => {
         this.showLoadingSpinner = false
@@ -108,37 +107,62 @@ export class GenerateRandomMovieOrShowComponent {
     })
   }
 
+  /**
+   * @param message 
+   * @param action 
+   * Recieves both a message and an action to display to the user
+   */
   async handleError(message: string, action: string) {
     this._snackBar.open(message, action);
   }
 
+  /**
+   * @param movieData 
+   * @returns A promise after fetching the needed movie caption else it assigns a default value
+   */
   async getMovieCaption(movieData: MovieResponse) {
     return new Promise(resolve => {
       resolve(this.movieCaption = movieData?.primaryImage?.caption?.plainText ?? "No Caption Available")
     })
   }
 
+  /**
+   * @param movieData 
+   * @returns A promise after fetching the needed movie release year else it assigns a default value
+   */
+
   async getMovieReleaseYear(movieData: MovieResponse) {
     return new Promise(resolve => {
       resolve(this.releaseYear = movieData?.releaseYear?.year ?? "No Release Available")
     })
   }
-
+  /**
+   * @param movieData 
+   * @returns A promise after fetching the needed movie title else it assigns a default value
+   */
   async getMovieTitle(movieData: MovieResponse) {
     return new Promise(resolve => {
       resolve(this.movieTitle = movieData?.titleText?.text ?? "No Title Available")
     })
   }
 
+  /**
+   * @param movieData 
+   * @returns A promise after fetching the needed movie rating else it assigns a default value
+   */
   async getMovieRating(movieData: MovieResponse) {
     return new Promise(resolve => {
       let movieId = movieData?.id
       this.apiService.getMovieRating(movieId).forEach((rating) => {
         resolve(this.movieRating = rating?.results?.averageRating ?? "")
       })
-
     })
   }
+
+  /**
+   * @param movieData 
+   * @returns A promise after fetching the needed movie image else it assigns a default value
+   */
 
   async getMovieImage(movieData: MovieResponse) {
     return new Promise(resolve => {
@@ -146,10 +170,10 @@ export class GenerateRandomMovieOrShowComponent {
     })
   }
 
-  dontAddDuplicates(selectedMovie: MovieResponse) {
-    console.log("Type Of", this.tableData)
-  }
-
+  /**
+   * @param movieData 
+   * @returnsTo Avoid an error if no image is found we first check if the value is null, if yes we assign it to "" else return the image URL
+   */
   async checkForNoImage(imageResult: string) {
     if (imageResult === null) {
       imageResult = ""
@@ -157,11 +181,19 @@ export class GenerateRandomMovieOrShowComponent {
     return imageResult
   }
 
+
+/**
+ * Empty the table array to clear the UI
+ */
   async clearTable() {
     this.tableData = []
     this.showTable = false
 
   }
+
+  /**
+   * Once all of the data has been fetched this route it called add the data to the table and display it to the user
+   */
 
   async fillTable() {
     this.tableData = [...this.tableData, { title: this.movieTitle, rating: this.movieRating, image: await this.checkForNoImage(this.imageUrl), caption: this.movieCaption, year: this.releaseYear }]
