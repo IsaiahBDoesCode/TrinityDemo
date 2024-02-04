@@ -61,7 +61,7 @@ export class GenerateRandomMovieOrShowComponent{
   movieRating: number
   movieImageUrl: string
   movieTitle: string
-  displayedColumns: string[] = ['image', 'title', 'rating', 'caption'];
+  displayedColumns: string[] = ['image', 'title', 'rating', 'caption', 'year'];
   tableData: any = []
   movieCaption: string
   imageUrl: string
@@ -69,21 +69,38 @@ export class GenerateRandomMovieOrShowComponent{
   titleFetched: boolean = false
   ratingFetched: boolean = false
   captionFetched: boolean =  false
+  isDuplicate: boolean = false
   selectedMovie: MovieResponse
+  showLoadingSpinner: boolean
+  showTable: boolean = false
+  releaseYear: number
   constructor(private apiService: ApiService, private _snackBar: MatSnackBar) { }
   getRandomIndex(min: number, max: number) {
     return Math.floor(Math.random() * (max - min + 1))
   }
 
   async getARandomTitle() {
+    this.showLoadingSpinner = true
       this.apiService.getRandomMovie().forEach((movieResults) => {
         const maxIndex = this.getRandomIndex(0, movieResults.results.length)
         this.selectedMovie = movieResults.results[maxIndex]
-        const waitForAllFunctions = [this.getMovieRating(this.selectedMovie), this.getMovieTitle(this.selectedMovie), this.getMovieCaption(this.selectedMovie), this.getMovieImage(this.selectedMovie)]
+        const waitForAllFunctions = [
+          this.getMovieRating(this.selectedMovie), 
+          this.getMovieTitle(this.selectedMovie),
+          this.getMovieCaption(this.selectedMovie), 
+          this.getMovieImage(this.selectedMovie), 
+          this.getMovieReleaseYear(this.selectedMovie),
+          this.dontAddDuplicates(this.selectedMovie)
+          ]
         Promise.all(waitForAllFunctions).then(results => {
-          console.log("Results", results)
-          console.log("This Movie Rating in Promise....", this.movieRating)
-          this.fillTable()
+          this.showLoadingSpinner = false
+          this.showTable = true
+          if(!this.isDuplicate){
+            this.fillTable()
+          }
+          else{
+            console.log('This is a duplicate record')
+          }
         })
       })
   }
@@ -94,13 +111,19 @@ export class GenerateRandomMovieOrShowComponent{
 
   async getMovieCaption(movieData: MovieResponse) {
     return new Promise(resolve => {
-      resolve(this.movieCaption = movieData?.primaryImage?.caption?.plainText ?? "")
+      resolve(this.movieCaption = movieData?.primaryImage?.caption?.plainText ?? "No Caption Available")
+    })
+  }
+
+  async getMovieReleaseYear(movieData: MovieResponse){
+    return new Promise(resolve => {
+      resolve(this.releaseYear = movieData?.releaseYear?.year ?? "No Release Available")
     })
   }
 
   async getMovieTitle(movieData: MovieResponse) {
     return new Promise(resolve => {
-        resolve(this.movieTitle = movieData?.titleText?.text ?? "")
+        resolve(this.movieTitle = movieData?.titleText?.text ?? "No Title Available")
     })
   }
 
@@ -116,16 +139,30 @@ export class GenerateRandomMovieOrShowComponent{
 
   async getMovieImage(movieData: MovieResponse) {
     return new Promise(resolve => {
-      resolve(this.imageUrl = movieData?.primaryImage?.url ?? "")
+      resolve(this.imageUrl = movieData?.primaryImage?.url ?? null)
     })
-    
+  }
+
+  dontAddDuplicates(selectedMovie: MovieResponse){
+    console.log("Type Of", this.tableData)
+  }
+
+  async checkForNoImage(imageResult: string){
+    if(imageResult === null){
+      imageResult = ""
+    }
+    return imageResult
+  }
+
+  async clearTable(){
+    this.tableData = []
+    this.showTable = false
+
   }
 
 
-
   async fillTable() {
-    console.log("This Movie Rating", this.movieRating)
-    this.tableData = [...this.tableData, { title: this.movieTitle, rating: this.movieRating, image: this.imageUrl, caption: this.movieCaption, }]
+    this.tableData = [...this.tableData, { title: this.movieTitle, rating: this.movieRating, image: await this.checkForNoImage(this.imageUrl), caption: this.movieCaption, year: this.releaseYear }]
   }
 
 }

@@ -6,6 +6,8 @@ import { HttpClientModule } from '@angular/common/http';
 import {MatTableModule} from '@angular/material/table';
 import { ApiService } from './services/apiService';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
+import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
+
 
 
 
@@ -28,7 +30,8 @@ import { GenerateRandomMovieOrShowComponent } from './generate-random-movie-or-s
     MatTabsModule,
     HttpClientModule,
     MatTableModule,
-    MatSnackBarModule
+    MatSnackBarModule,
+    MatProgressSpinnerModule
   ],
   providers: [ApiService],
   bootstrap: [AppComponent]
