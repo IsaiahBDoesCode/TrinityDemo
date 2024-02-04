@@ -92,7 +92,7 @@ export class GenerateRandomMovieOrShowComponent {
       const maxIndex = this.getRandomIndex(0, movieResults.results.length)
       console.log("Max Index", maxIndex)
       this.selectedMovie = movieResults.results[maxIndex]
-      const waitForAllFunctions = [
+      const buildMovieResults = [
         this.getMovieRating(this.selectedMovie),
         this.getMovieTitle(this.selectedMovie),
         this.getMovieCaption(this.selectedMovie),
@@ -100,7 +100,7 @@ export class GenerateRandomMovieOrShowComponent {
         this.getMovieReleaseYear(this.selectedMovie),
         this.dontAddDuplicates(this.selectedMovie)
       ]
-      Promise.all(waitForAllFunctions).then(() => {
+      Promise.all(buildMovieResults).then(() => {
         this.showLoadingSpinner = false
         this.showTable = true
         this.fillTable()
