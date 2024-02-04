@@ -1,6 +1,6 @@
 <div class="center">
   <button mat-raised-button color="primary" (click)="getARandomTitle()">Generate Random Movie Details!</button>
-  <button mat-raised-button color="warn" (click)="clearTable()">Clear Table</button>
+  <button *ngIf="showTable" mat-raised-button color="warn" (click)="clearTable()">Clear Table</button>
 </div>
 
 <div class="center" *ngIf="tableData.length < 1 && showLoadingSpinner" class="center">

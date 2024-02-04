@@ -12,8 +12,15 @@ export interface MovieElement {
   caption: string;
 }
 
-export interface MovieResponse {
+export interface TableData {
+  caption: string
+  image: string
+  rating: number
+  title: string
+  year: number
+}
 
+export interface MovieResponse {
   _id: string,
   id: string,
   primaryImage: {
@@ -57,18 +64,18 @@ export interface MovieResponse {
 
 })
 
-export class GenerateRandomMovieOrShowComponent{
+export class GenerateRandomMovieOrShowComponent {
   movieRating: number
   movieImageUrl: string
   movieTitle: string
   displayedColumns: string[] = ['image', 'title', 'rating', 'caption', 'year'];
-  tableData: any = []
+  tableData: TableData[] = []
   movieCaption: string
   imageUrl: string
   imageFetched: boolean = false
   titleFetched: boolean = false
   ratingFetched: boolean = false
-  captionFetched: boolean =  false
+  captionFetched: boolean = false
   isDuplicate: boolean = false
   selectedMovie: MovieResponse
   showLoadingSpinner: boolean
@@ -81,28 +88,24 @@ export class GenerateRandomMovieOrShowComponent{
 
   async getARandomTitle() {
     this.showLoadingSpinner = true
-      this.apiService.getRandomMovie().forEach((movieResults) => {
-        const maxIndex = this.getRandomIndex(0, movieResults.results.length)
-        this.selectedMovie = movieResults.results[maxIndex]
-        const waitForAllFunctions = [
-          this.getMovieRating(this.selectedMovie), 
-          this.getMovieTitle(this.selectedMovie),
-          this.getMovieCaption(this.selectedMovie), 
-          this.getMovieImage(this.selectedMovie), 
-          this.getMovieReleaseYear(this.selectedMovie),
-          this.dontAddDuplicates(this.selectedMovie)
-          ]
-        Promise.all(waitForAllFunctions).then(results => {
-          this.showLoadingSpinner = false
-          this.showTable = true
-          if(!this.isDuplicate){
-            this.fillTable()
-          }
-          else{
-            console.log('This is a duplicate record')
-          }
-        })
+    this.apiService.getRandomMovie().forEach((movieResults) => {
+      const maxIndex = this.getRandomIndex(0, movieResults.results.length)
+      console.log("Max Index", maxIndex)
+      this.selectedMovie = movieResults.results[maxIndex]
+      const waitForAllFunctions = [
+        this.getMovieRating(this.selectedMovie),
+        this.getMovieTitle(this.selectedMovie),
+        this.getMovieCaption(this.selectedMovie),
+        this.getMovieImage(this.selectedMovie),
+        this.getMovieReleaseYear(this.selectedMovie),
+        this.dontAddDuplicates(this.selectedMovie)
+      ]
+      Promise.all(waitForAllFunctions).then(() => {
+        this.showLoadingSpinner = false
+        this.showTable = true
+        this.fillTable()
       })
+    })
   }
 
   async handleError(message: string, action: string) {
@@ -115,7 +118,7 @@ export class GenerateRandomMovieOrShowComponent{
     })
   }
 
-  async getMovieReleaseYear(movieData: MovieResponse){
+  async getMovieReleaseYear(movieData: MovieResponse) {
     return new Promise(resolve => {
       resolve(this.releaseYear = movieData?.releaseYear?.year ?? "No Release Available")
     })
@@ -123,17 +126,17 @@ export class GenerateRandomMovieOrShowComponent{
 
   async getMovieTitle(movieData: MovieResponse) {
     return new Promise(resolve => {
-        resolve(this.movieTitle = movieData?.titleText?.text ?? "No Title Available")
+      resolve(this.movieTitle = movieData?.titleText?.text ?? "No Title Available")
     })
   }
 
   async getMovieRating(movieData: MovieResponse) {
     return new Promise(resolve => {
-    let movieId = movieData?.id
-    this.apiService.getMovieRating(movieId).forEach((rating) => {
+      let movieId = movieData?.id
+      this.apiService.getMovieRating(movieId).forEach((rating) => {
         resolve(this.movieRating = rating?.results?.averageRating ?? "")
       })
-     
+
     })
   }
 
@@ -143,26 +146,26 @@ export class GenerateRandomMovieOrShowComponent{
     })
   }
 
-  dontAddDuplicates(selectedMovie: MovieResponse){
+  dontAddDuplicates(selectedMovie: MovieResponse) {
     console.log("Type Of", this.tableData)
   }
 
-  async checkForNoImage(imageResult: string){
-    if(imageResult === null){
+  async checkForNoImage(imageResult: string) {
+    if (imageResult === null) {
       imageResult = ""
     }
     return imageResult
   }
 
-  async clearTable(){
+  async clearTable() {
     this.tableData = []
     this.showTable = false
 
   }
 
-
   async fillTable() {
     this.tableData = [...this.tableData, { title: this.movieTitle, rating: this.movieRating, image: await this.checkForNoImage(this.imageUrl), caption: this.movieCaption, year: this.releaseYear }]
-  }
 
+    console.log("This Table Data", this.tableData)
+  }
 }
