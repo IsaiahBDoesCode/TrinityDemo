@@ -5,13 +5,6 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
 
-export interface MovieElement {
-  title: string
-  image: string;
-  rating: number;
-  caption: string;
-}
-
 export interface TableData {
   caption: string
   image: string
