@@ -97,7 +97,6 @@ export class GenerateRandomMovieOrShowComponent {
     this.showLoadingSpinner = true
     this.apiService.getRandomMovie().forEach((movieResults) => {
       const maxIndex = this.getRandomIndex(0, movieResults.results.length)
-      console.log("Max Index", maxIndex)
       this.selectedMovie = movieResults.results[maxIndex]
       const buildMovieResults = [
         this.getMovieRating(this.selectedMovie),
@@ -204,7 +203,5 @@ export class GenerateRandomMovieOrShowComponent {
 
   async fillTable() {
     this.tableData = [...this.tableData, { title: this.movieTitle, rating: this.movieRating, image: await this.checkForNoImage(this.imageUrl), caption: this.movieCaption, year: this.releaseYear }]
-
-    console.log("This Table Data", this.tableData)
   }
 }

@@ -11,7 +11,6 @@ export class ApiService {
     moviesURl = "https://moviesdatabase.p.rapidapi.com"
     constructor(private http: HttpClient) { }
     fetchConfigs() {
-        console.log("Config...", config)
         return config
     }
 
