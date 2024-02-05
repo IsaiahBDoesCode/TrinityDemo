@@ -82,10 +82,24 @@ export class GenerateRandomMovieOrShowComponent {
   showTable: boolean = false
   releaseYear: number
   constructor(private apiService: ApiService, private _snackBar: MatSnackBar) { }
+
+  /**
+   * 
+   * @param min 
+   * @param max 
+   * @returns A random index within the range of the results set
+   */
   getRandomIndex(min: number, max: number) {
     return Math.floor(Math.random() * (max - min + 1))
   }
 
+
+  /**
+   * Fetch a list of titles from the API and retrieve a value at a random index within the range of the results set.
+   * Executes a series of asynchronous functions concurrently using Promise.all.
+   * This function is designed to coordinate the execution of multiple asynchronous tasks,
+   * ensuring that all tasks complete before proceeding to the next step in the program flow (Filling the table).
+   */
   async getARandomTitle() {
     this.showLoadingSpinner = true
     this.apiService.getRandomMovie().forEach((movieResults) => {
